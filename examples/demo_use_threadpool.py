@@ -17,13 +17,13 @@
 
 def demo_app(environ,start_response):
     """Demo app from wsgiref"""
-    from StringIO import StringIO
+    from io import StringIO
     stdout = StringIO()
-    print >>stdout, "Hello world!"
-    print >>stdout
-    h = environ.items(); h.sort()
+    print("Hello world!", file=stdout)
+    print(file=stdout)
+    h = list(environ.items()); h.sort()
     for k,v in h:
-        print >>stdout, k,'=',`v`
+        print(k,'=',repr(v), file=stdout)
     start_response("200 OK", [('Content-Type','text/plain')])
     return [stdout.getvalue()]
 

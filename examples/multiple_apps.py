@@ -43,12 +43,12 @@ def PreInstallDirectory(params, options):
 
 # Post install hook for our entire script
 def PostInstall(params, options):
-    print "Extension installed"
+    print("Extension installed")
 
 # Handler for our custom 'status' argument.
 def status_handler(options, log, arg):
     "Query the status of something"
-    print "Everything seems to be fine!"
+    print("Everything seems to be fine!")
 
 custom_arg_handlers = {"status": status_handler}
 

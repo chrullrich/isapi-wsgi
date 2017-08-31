@@ -42,8 +42,7 @@ import os
 import stat
 import string
 import re
-try: from cStringIO import StringIO
-except ImportError: from StringIO import StringIO
+from io import BytesIO
 
 
 traceon = 0
@@ -124,7 +123,7 @@ class ECBDictAdapter(object):
         try:
             return self._get_variable(key)
         except ExtensionError:
-            raise KeyError, key
+            raise KeyError(key)
 
     # a few helpers specific to the IIS and python version.
     def _get_variable(self, key):
@@ -152,7 +151,7 @@ def path_references_application(path, apps):
     
     """
     # assume separator is /
-    nodes = filter(None, path.split('/'))
+    nodes = list(filter(None, path.split('/')))
     return nodes and nodes[0] in apps
 
 def interpretPathInfo(ecb_server_vars, app_names=[]):
@@ -294,7 +293,7 @@ def getISAPIExtensionPath(ecb_server_vars):
 class ISAPIInputWrapper:
     # Based on ModPythonInputWrapper in mp_wsgi_handler.py
     def __init__(self, ecb):
-        self._in = StringIO()
+        self._in = BytesIO()
         self._ecb = ecb
         if self._ecb.AvailableBytes > 0:
             data = self._ecb.AvailableData
@@ -307,8 +306,8 @@ class ISAPIInputWrapper:
         # rewind to start
         self._in.seek(0)
 
-    def next(self):
-        return self._in.next()
+    def __next__(self):
+        return next(self._in)
 
     def read(self, size=-1):
         return self._in.read(size)
@@ -524,12 +523,12 @@ def PreInstallDirectory(params, options):
 
 # Post install hook for our entire script
 def PostInstall(params, options):
-    print "Extension installed"
+    print("Extension installed")
 
 # Handler for our custom 'status' argument.
 def status_handler(options, log, arg):
     "Query the status of something"
-    print "Everything seems to be fine!"
+    print("Everything seems to be fine!")
 
 custom_arg_handlers = {"status": status_handler}
 

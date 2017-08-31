@@ -4,8 +4,8 @@ Based on WSGI webkit tests with some patches.
 """
 
 import unittest
-import urlparse
-import urllib
+import urllib.parse
+import urllib.request
 import os
 import sys
 
@@ -29,7 +29,7 @@ class TestEnviron(EchoTest):
         url = self.url()
         required_keys = 'REQUEST_METHOD SCRIPT_NAME PATH_INFO QUERY_STRING SERVER_NAME SERVER_PORT wsgi.errors wsgi.input wsgi.multiprocess wsgi.multithread wsgi.version'
         for key in required_keys.split():
-            assert environ.has_key(key), "Key %r missing from %r" % (key, environ)
+            assert key in environ, "Key %r missing from %r" % (key, environ)
         self.assertEqual(environ['PATH_INFO'], '')
         self.assertEqual(environ['SCRIPT_NAME'], url.path)
         self.assertEqual(environ['REQUEST_METHOD'], 'GET')
@@ -79,7 +79,7 @@ class URL:
     def __init__(self, url_string):
         self.url_string = url_string
         (self.scheme, self.location, self.path, self.query,
-         self.fragment) = urlparse.urlsplit(url_string)
+         self.fragment) = urllib.parse.urlsplit(url_string)
         if ':' in self.location:
             self.host, self.port = self.location.split(':', 1)
         else:
@@ -91,14 +91,14 @@ class URL:
             else:
                 assert 0, "Unknown scheme: %r" % self.scheme
         self.port = int(self.port)
-        
+
     def fetch(self, **kw):
-        query = '&'.join(['%s=%s' % (urllib.quote(k), urllib.quote(v))
+        query = '&'.join(['%s=%s' % (urllib.parse.quote(k), urllib.parse.quote(v))
                           for k, v in kw.items()])
         url = self.url_string
         if query:
             url += '?' + query
-        f = urllib.urlopen(url)
+        f = urllib.request.urlopen(url)
         page = f.read()
         f.close()
         return page

@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from io import StringIO
 
 class FakeECB:
     def __init__(self):
@@ -24,7 +24,7 @@ class FakeECB:
     write = WriteClient
 
     def close(self):
-        print str(id(self)) +" close()"
+        print(str(id(self)) +" close()")
 
     def GetServerVariable(self, cgivar):
         return self.vars[cgivar]

@@ -40,7 +40,7 @@ def application(environ, start_response):
                             environ=environ,
                             keep_blank_values=True)
     headers = {}
-    for key in form.keys():
+    for key in form:
         if key.startswith('header.'):
             headers[key[len('header.'):]] = form[key].value
             
@@ -53,12 +53,12 @@ def application(environ, start_response):
 
     if form.getvalue('environ'):
         write = start_response('200 OK', [('Content-type', 'text/plain')])
-        items = environ.items()
+        items = list(environ.items())
         items.sort()
         return ['%s=%s\n' % (name, value)
                 for name, value in items]
 
-    if form.has_key('message'):
+    if 'message' in form:
         write = start_response('200 OK', [('Content-type', 'text/plain')])
         write(form['message'].value)
         return []
